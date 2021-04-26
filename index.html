@@ -1,1 +1,164 @@
-Hello world
+<!DOCTYPE html>
+<html>
+    <head>
+<style>
+    body {
+        margin: 0;
+    }
+
+    canvas {
+        display: block;
+    }
+
+</style>
+    <title>Title of webpage goes here</title>
+    </head>
+    <body>
+        
+        <canvas id = "mycanvas"></canvas>
+        <script src="pixi.js"></script>
+
+        <script type="text/javascript">
+            const canvas = document.getElementById('mycanvas');
+            const app = new PIXI.Application({
+                view:canvas, 
+                width: window.innerWidth,
+                height: window.innerHeight,
+                resolution: window.devicePixelRatio,
+                autoDensity: true,
+                resizeTo: window
+            });
+
+            /* Don't need to do this as we're adding it to the preexisting canvas above. */
+            //document.body.appendChild(app.view);
+
+            const texture = PIXI.Texture.from('painpeko.png');
+            const img = new PIXI.Sprite(texture);
+            img.x = app.renderer.width / 2;
+            img.y = app.renderer.height / 2;
+            img.vx = 0;
+            img.vy = 0;
+            img.anchor.x = 0.5;
+            img.anchor.y = 0.5;
+            img.scale.set(1, 1);
+            app.stage.addChild(img);
+
+            app.ticker.add(delta => gameLoop(delta));
+
+            /*
+            SAMPLE OF A KEY OBJECT
+            let keyObject = keyboard(keyValue);
+            keyObject.press = () => {
+                //Pressed key
+            };
+            keyObject.release = () => {
+                //Released key
+            };
+            keyObject.unsubscribe();
+            */
+
+            let right = keyboard("ArrowRight");
+            let left = keyboard("ArrowLeft");
+            let up = keyboard("ArrowUp");
+            let down = keyboard("ArrowDown");
+
+            right.press = () => {
+                img.vx += 5;
+            };
+            right.release = () => {
+                img.vx -= 5;
+            }
+
+            left.press = () => {
+                img.vx -= 5;
+            };
+            left.release = () => {
+                img.vx += 5;
+            }
+
+            up.press = () => {
+                img.vy -= 5;
+            };
+            up.release = () => {
+                img.vy += 5;
+            }
+
+            down.press = () => {
+                img.vy += 5;
+            };
+            down.release = () => {
+                img.vy -= 5;
+            }
+
+
+            function gameLoop(delta)
+            {
+                img.x += img.vx;
+                img.y += img.vy;
+            }
+
+            function keyboard(value)
+            {
+                let key = {};
+                key.value = value;
+                key.isDown = false;
+                key.isUp = true;
+                key.press = undefined;
+                key.release = undefined;
+
+                key.downHandler = event => {
+                    if (event.key === key.value) {
+                        if (key.isUp && key.press) key.press();
+                        key.isDown = true;
+                        key.isUp = false;
+                        event.preventDefault();
+                    }
+                };
+
+                //The `upHandler`
+                key.upHandler = event => {
+                    if (event.key === key.value) {
+                        if (key.isDown && key.release) key.release();
+                        key.isDown = false;
+                        key.isUp = true;
+                        event.preventDefault();
+                        }
+                };
+
+                //Attach event listeners
+                const downListener = key.downHandler.bind(key);
+                const upListener = key.upHandler.bind(key);
+                
+                window.addEventListener(
+                    "keydown", downListener, false
+                );
+                window.addEventListener(
+                    "keyup", upListener, false
+                );
+                
+                // Detach event listeners
+                key.unsubscribe = () => {
+                    window.removeEventListener("keydown", downListener);
+                    window.removeEventListener("keyup", upListener);
+                };
+                
+                return key;
+            }
+
+            /*
+            function animate() {
+                const max = img.width;
+                img.rotation += 0.06;
+                img.x += 10;
+
+                if(img.x>app.renderer.width+max){
+                    img.x = max*-1;
+                }
+
+            }
+            */
+
+        </script>
+
+    </body>
+</html>
