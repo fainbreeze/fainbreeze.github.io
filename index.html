@@ -11,12 +11,13 @@
     }
 
 </style>
-    <title>Title of webpage goes here</title>
+    <title>What even is this</title>
     </head>
     <body>
         
         <canvas id = "mycanvas"></canvas>
         <script src="pixi.js"></script>
+        <script src="pixi-sound.js"></script>
 
         <script type="text/javascript">
             const canvas = document.getElementById('mycanvas');
@@ -34,6 +35,11 @@
 
             const texture = PIXI.Texture.from('painpeko.png');
             const img = new PIXI.Sprite(texture);
+            //PIXI.sound.add('rrat', 'rrat.mp3');
+            const rrat = PIXI.sound.Sound.from({
+                url: 'rrat.mp3',
+                autoPlay: false,
+            });
             img.x = app.renderer.width / 2;
             img.y = app.renderer.height / 2;
             img.vx = 0;
@@ -45,56 +51,58 @@
 
             app.ticker.add(delta => gameLoop(delta));
 
-            /*
-            SAMPLE OF A KEY OBJECT
-            let keyObject = keyboard(keyValue);
-            keyObject.press = () => {
-                //Pressed key
-            };
-            keyObject.release = () => {
-                //Released key
-            };
-            keyObject.unsubscribe();
-            */
-
             let right = keyboard("ArrowRight");
             let left = keyboard("ArrowLeft");
             let up = keyboard("ArrowUp");
             let down = keyboard("ArrowDown");
+            let space = keyboard(" ");
 
             right.press = () => {
                 img.vx += 5;
             };
             right.release = () => {
                 img.vx -= 5;
-            }
+            };
 
             left.press = () => {
                 img.vx -= 5;
             };
             left.release = () => {
                 img.vx += 5;
-            }
+            };
 
             up.press = () => {
                 img.vy -= 5;
             };
             up.release = () => {
                 img.vy += 5;
-            }
+            };
 
             down.press = () => {
                 img.vy += 5;
             };
             down.release = () => {
                 img.vy -= 5;
-            }
+            };
+
+            space.press = () => {
+                img.se = 1;
+            };
+            space.release = () => {
+                img.se = 0;
+            };
 
 
             function gameLoop(delta)
             {
                 img.x += img.vx;
                 img.y += img.vy;
+
+                if(img.se == 1 && !rrat.isPlaying)
+                {
+                    img.se=0;
+                    rrat.play();
+                }
             }
 
             function keyboard(value)
