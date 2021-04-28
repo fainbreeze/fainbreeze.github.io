@@ -11,7 +11,7 @@
     }
 
 </style>
-    <title>Game Prototype</title>
+    <title>What even is this</title>
     </head>
     <body>
         
@@ -40,22 +40,16 @@
                 url: 'rrat.mp3',
                 autoPlay: false,
             });
-            img.x = 100;
+            img.x = app.renderer.width / 2;
             img.y = app.renderer.height / 2;
             img.vx = 0;
             img.vy = 0;
-            notJumping = 0;
-            currJumpTime = 0;
-            jump = 0;
-            done = 0;
-            //img.anchor.x = 0.5;
-            //img.anchor.y = 0.5;
+            img.anchor.x = 0.5;
+            img.anchor.y = 0.5;
             img.scale.set(1, 1);
             app.stage.addChild(img);
 
             app.ticker.add(delta => gameLoop(delta));
-
-            var jumpTick;
 
             let right = keyboard("ArrowRight");
             let left = keyboard("ArrowLeft");
@@ -63,57 +57,52 @@
             let down = keyboard("ArrowDown");
             let space = keyboard(" ");
 
+            right.press = () => {
+                img.vx += 5;
+            };
+            right.release = () => {
+                img.vx -= 5;
+            };
+
+            left.press = () => {
+                img.vx -= 5;
+            };
+            left.release = () => {
+                img.vx += 5;
+            };
+
+            up.press = () => {
+                img.vy -= 5;
+            };
+            up.release = () => {
+                img.vy += 5;
+            };
+
+            down.press = () => {
+                img.vy += 5;
+            };
+            down.release = () => {
+                img.vy -= 5;
+            };
+
             space.press = () => {
                 img.se = 1;
-                notJumping = 1;
             };
             space.release = () => {
                 img.se = 0;
             };
 
-            jumpTick = delta => jumpFunc();
 
             function gameLoop(delta)
             {
                 img.x += img.vx;
                 img.y += img.vy;
-                console.log(img.se);
-                console.log(rrat.isPlaying);
-                console.log(done);
 
-                if(img.se == 1 && !rrat.isPlaying && done == 0)
+                if(img.se == 1 && !rrat.isPlaying)
                 {
                     img.se=0;
                     rrat.play();
-                    console.log("starting jump");
-
-                    if(notJumping == 1)
-                    {
-                        currJumpTime += delta;
-
-                        jump = 0;
-                        done = 0;
-                        app.ticker.add(jumpTick);
-                    }
                 }
-
-                if(done == 1)
-                {
-                    app.ticker.remove(jumpTick);
-                    notJumping = 0;
-                    done = 0;
-                }
-            }
-
-            function jumpFunc()
-            {
-                jump = jump - 0.08;
-                if(jump <= Math.PI*2*-1)
-                {
-                    jump = 0;
-                    done = 1;
-                }
-                img.vy = Math.sin(jump)*20;
             }
 
             function keyboard(value)
@@ -163,6 +152,19 @@
                 
                 return key;
             }
+
+            /*
+            function animate() {
+                const max = img.width;
+                img.rotation += 0.06;
+                img.x += 10;
+
+                if(img.x>app.renderer.width+max){
+                    img.x = max*-1;
+                }
+
+            }
+            */
 
         </script>
 
